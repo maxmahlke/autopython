@@ -1,0 +1,1676 @@
+#+TITLE: The Astronomer's Guide to ~python~
+#+AUTHOR: Max Mahlke
+#+DATE: September 2, 2021
+#+HUGO_BASE_DIR: ~/astro/org/hugo
+#+HUGO_SECTION: talks
+
+#+LATEX: \iffalse
+#+begin_quote
+This file contains both the slides for the talk and the handout pdf. The slides
+are tangled into the ~autopython.md~ file using ~org-babel-tangle~ and
+presented using the ~lookatme~ python package. The handout is compiled using
+~org-pandoc-export-to-latex-pdf~.
+#+end_quote
+#+LATEX: \fi
+
+#+begin_src md :tangle autopython.md :exports none
+---
+title: The Astronomer's Guide to python
+author: Max Mahlke
+date: 2021-09-02
+extensions:
+  - image_ueberzug
+---
+.
+
+
+![20](gfx/astronomy_status_board.png)
+
+.
+
+Astronomy reduced to the realm of booleans. Credit: [xkcd](https://xkcd.com/2469/)
+
+---
+
+# Before we begin
+
+- Hi, I'm Max
+
+
+- How do you open the terminal on your computer?
+
+
+- What's a boolean?
+
+
+- What is the boolean value of 1.4 in python?
+
+
+- What is the difference between a list and a set in python?
+
+
+- Lecture notes are at https://github.com/maxmahlke/autopython
+
+
+---
+#+end_src
+
+* Motivation
+
+** The Age of Digital Astronomy
+
+The transition from an analog to a digital world in the second half of the 20th
+century did not skip the field of astronomy. The /charge-coupled device/ (CCD) has
+replaced the human eye and the photomultiplier tube as the recording device at
+the lower end of the telescope. Observations taken in Chile can be examined in
+France during the same night.
+
+#+CAPTION: Astronomy reduced to the realm of booleans. Credit: [[https://xkcd.com/2469/][xkcd]]
+#+ATTR_HTML: :width 300px
+[[file:gfx/astronomy_status_board.png]]
+
+In addition to the now digital nature of astronomical observations, there is
+also a large increase in the amount of data. The next-generation of all-sky
+surveys will produce several terabytes of data per night each, such as the
+/Legacy Survey of Space and Time/ (LSST) at the Vera C. Rubin observatory.
+
+The field of "big data" brings new challenges to the profession of astronomer which
+require a completely new skillset: digital data processing and analysis.
+Astronomers in general do /not/ have a computer science qualification.
+Nevertheless, the day-to-day work is often coding, and astronomers end up
+learning to code on their own.
+
+This course aims to support you on your road to learn coding in general, and ~python~ in particular, by giving you an overview of what's ahead, how to progress efficiently, and potential shortcuts and dead-ends along the path. The lessons it contains come from experiences that I have made over my first 10 years of learning ~python~ on my own. It may seem daunting at first, but I assure you, it's an enjoyable journey.
+
+#+begin_src md :tangle autopython.md :exports none
+# Motivation
+
+## The Age of Digital Astronomy
+
+- Astronomy today is a digital world: the CCD has replaced the human eye at the lower end of the telescope
+
+
+- There are terabytes of observations produced each night and evaluated in real-time
+
+
+- A new set of skills is required for today's astronomer: digital data processing and analysis
+
+
+- This is true for all fields (planetary astronomy, stellar physics, galaxies and the Universe) and all stages of the career (Master student, PhD, postdoc, permanent)
+
+
+- Yet: most astronomers do _not_ have a computer science qualification. They are in general self-taught.
+
+---
+#+end_src
+
+
+** Learn to code
+
+Among the typical day-to-day work of an astronomer are writing publications and
+writing code for your own research. Meaning: Most of the time is spent programming.
+
+Being skilled in a programming language makes your daily life easier and more
+enjoyable. In addition, the enjoyment you get out of programming increases with
+your skill. Remember, you code every day.
+
+Once you know how to code, you want to learn how to do it properly. Learning to
+code is not a single activity, but it takes years and continuous throughout your
+career. To stay efficient, you have to keep up with the developments in your coding language.
+
+Finally, coding is fun.
+
+#+begin_src md :tangle autopython.md :exports none
+# Motivation
+
+## Learn to code
+
+- Programming is the day-to-day work of an astronomer: process data, analyse data, create figures, ...
+
+
+- Being skilled in a programming language makes your daily tasks more efficient and enjoyable
+
+
+- Coding is fun
+
+
+Keep in mind:
+
+
+- Learning to code is not a one-off task: it takes years and never really stops. Languages develop and new tools show up.
+
+---
+#+end_src
+
+** Learn to code ~python~
+
+There are many programming languages out there: Fortran, C, C#,
+C++, JavaScript, IDL, R, python, Julia, Go, and more. You can achieve the same tasks with most of them but some are better suited for certain tasks than others.
+
+Here are some subjective reasons to choose ~python~ as your language of choice:
+
+1. ~python~ is easy to read and write, which saves you time.
+
+  #+begin_src python
+  colours = ["blue", "black", "red"]
+
+  for colour in colours:
+      print(f"My favourite colour is {colour}")
+
+  if "yellow" in colours:
+      print("Yellow is one of my favourite colours.")
+  #+end_src
+
+2. There is a rich package ecosystem: most of the work has been done for you already.
+
+  You want to analyse the data in a CSV file? The ~pandas~ package helps you
+   out. You are observing stars and want to extract their absolute magnitudes
+   from FITS images? The ~photutils~ package has functions for this. You have to
+   convert the equatorial coordinates of a source to galactic ones while
+   precessing the equinox of the coordinate frame from ~J1975~ to ~J2000~? Try
+   ~astropy.coordinates~.
+
+3. It has a large user base, meaning it will continue to progress and develop.
+
+
+  #+CAPTION: Results of the 2020 /StackOverflow Developer Survey/ on the most used programming languages by their user base (65,000 responses, multiple answers possible).
+  #+ATTR_HTML: :width 450px
+  [[file:gfx/so_survey.png]]
+
+4. It's free. It's accessible. All the code you have can be inspected on your computer.
+
+A common criticism of ~python~ is that it is slow compared to languages like FORTRAN, C, C++. This is objectively correct and can be understood when comparing the inner workings of the languages. For me, this is secondary: my time is more valuable than the CPU time. If I can write code quicker, I don't mind if it takes longer to execute. And it's really not that slow.
+
+#+begin_src md :tangle autopython.md :exports none
+# Motivation
+
+## Learn to code *python*
+
+There are many programming languages: Fortran, C, C#, C++, JavaScript, IDL, R, python, Julia, Go, and more. Some are better suited for certain tasks than others.
+
+Subjective reasons to learn `python`:
+
+1\. `python` is easy to read and write.
+
+```python
+
+    colours = ["blue", "black", "red"]
+
+    for colour in colours:
+        print(f"My favourite colour is {colour}")
+```
+
+Output:
+
+```shell
+    My favourite colour is blue
+    My favourite colour is black
+    My favourite colour is red
+```
+
+This makes it easier to learn.
+
+---
+
+# Motivation
+
+## Learn to code *python*
+
+There are many programming languages: Fortran, C, C#, C++, JavaScript, IDL, R, python, Julia, Go, and more. Some are better suited for certain tasks than others.
+
+Subjective reasons to learn `python`:
+
+2\. There is a rich package ecosystem: most of the work has been done for you already.
+
+- You want to analye the data in a CSV file? The ``pandas`` package helps
+  you out.
+
+- You are observing stars and want to extract their absolute magnitudes
+  from FITS images? The ``photutils`` package has functions for this.
+
+- You have to convert the equatorial coordinates of a source to galactic ones while
+  precessing the equinox of the coordinate frame from ``J1975`` to ``J2000``? Try
+  ``astropy.coordinates``.
+
+---
+
+# Motivation
+
+## Learn to code *python*
+
+There are many programming languages: Fortran, C, C#, C++, JavaScript, IDL, R, python, Julia, Go, and more. Some are better suited for certain tasks than others.
+
+Subjective reasons to learn `python`:
+
+3\. It has a large user base, meaning it will continue to progress and develop.
+
+Results from the 2020 *StackOverflow Developer Survey*: What programming language do you use [multiple answers possible]?: `python` is the number one for data analysis (42% of developers use it).
+
+---
+
+# Motivation
+
+## Learn to code *python*
+
+There are many programming languages: Fortran, C, C#, C++, JavaScript, IDL, R, python, Julia, Go, and more. Some are better suited for certain tasks than others.
+
+Subjective reasons to learn `python`:
+
+4\. It's free. It's accessible. All the code you have can be inspected on your computer.
+
+---
+
+# Motivation
+
+## Learn to code *python*
+
+There are many programming languages: Fortran, C, C#, C++, JavaScript, IDL, R, python, Julia, Go, and more. Some are better suited for certain tasks than others.
+
+Objective reason to **not** learn `python`:
+
+It is slow compared to languages like FORTRAN, C, C++. Personally: my time is
+more valuable than the CPU time. If I can write code quicker, I don't mind if it
+takes longer to execute.
+
+And it's really not that slow.
+
+---
+#+end_src
+
+* Scope of this Course
+
+Learning to code in general and a language in particular takes a lot of time and
+effort. The aim of this course is therefore not to teach you how to code in
+~python~. Instead, I want to provide you with an overview of what there is to
+learn, what to focus on in the beginning, and how to learn efficiently /on your
+own/.
+
+In the next sections, we will cover:
+
+- A minimal introduction to ~python~. We need a basic vocabulary to talk about aspects of the language.
+- ~python~ on your system: what is installed? How do you execute ~python~ files?
+- When things go wrong: understanding error messages.
+- The ~python~ standard library
+- Highlights of third-party ~python~ packages
+- Tools for coding: editors, ~jupyter notebooks~, ~ipython~
+- Best Practices for coding ~python~
+- Some challenging exercises
+
+**Not** included are
+
+- How to code ~python~: this is not possible in 3h, though learning the syntax is not difficult.
+- How to navigate the command line, tools like ~awk~, ~grep~, ~sed~. This is an optional skillset which I recommend but you can do without for now.
+
+#+begin_src md :tangle autopython.md :exports none
+# Scope of the course
+
+## Today
+
+- ~~Why you should learn to code~~
+
+
+- ~~Why learn python over other languages~~
+
+
+- A minimal introduction to `python`
+
+
+- `python` on your system: what is installed and how to execute it
+
+
+- When things go wrong: understanding error messages
+
+
+- The quick look at the `python` standard library
+
+
+- Highlight of third-party `python` packages
+
+
+- Best Practices for coding in general and `python` in particular
+
+
+- Tools for coding: editors, `jupyter notebooks`, `ipython`
+
+
+- Exercises for the following week
+
+---
+
+# Scope of this course
+
+## Next Thursday
+
+- Discussion of exercises: you present your solutions, I present mine
+
+
+- ?
+
+
+Q&A, advanced topics, live exercises, the command line and UNIX...
+
+
+## Not covered
+
+- `python` syntax: too much to cover in 3 hours (and would make for boring lectures)
+
+
+- Basic UNIX commands: `cd`, `ls`, `mkdir`, `grep`, `sed`, `awk`, ... Again, too much to cover, but I highly recommend learning how to navigate the command line!
+
+---
+
+#+end_src
+
+* A minimal introduction to python
+
+This course does not intend to teach you ~python~ syntax. Nevertheless, we will
+need a basic vocabulary when discussing aspects of the language, so here is a
+brief overview of the most minimal ~python~ basics.
+
+
+** What is ~python~?
+
+There are three key properties to define ~python~. They may not influence the way
+you code in the beginning but it's good to know about them anyway.
+
+1.  ~python~ is an interpreted language: Each line is executed as it is passed to the ~python~ interpreter. Lines at the top of a script are executed first. The alternative is a compiled language such as ~C++~, where a compiler verifies the code before compiling it into an executable, which is then run by the user.
+
+2. ~python~ is a high-level language: The programmer does not have to worry about common questions such as memory allocation and variable typing. This is one of the reasons why ~python~ is quick to learn.
+
+3. ~python~ is object-oriented. This refers to the structure of ~python~ code, which revolves around building classes with exposed high-level interfaces while the inner workings are hidden. This is a conceptual difference to other programming languages which follow other paradigms.
+
+#+begin_src md :tangle autopython.md :exports none
+# A minimal introduction to `python`
+
+## What is `python`?
+
+Three key properties define `python`:
+
+1\. _interpreted language_: executed line by line rather than compiling a binary executable
+
+
+2\. _high-level_: no need for memory allocation or variable typing, `python` does it for you
+
+
+3\. _object-oriented_: coding revolves around classes which are well separated from each other
+
+---
+#+end_src
+
+
+** Data Types
+
+~python~ allows you have to store data in variables and to run operations on these
+variables. Several /data types/ are supported. A subset of these types are the
+following:
+
+#+begin_src python
+x = 4    # int    (integer)
+y = 4.3  # float  (floating point value)
+z = "hello world"  # str  (string)
+today_is_thursday = True  # bool (boolean)
+chars_and_numbers = ["a", "b", "c", "c", 1, 2, 3]  # list
+phonebook = {"Alice": 61234567, "Bob": 68765432}  # dict (dictionary)
+first_four_of_alphabet = {"a", "b", "c", "d"}  # set
+#+end_src
+
+To get the type of a variable, use the ~type()~ function:
+
+#+begin_src python
+>>> type(y)
+<class 'float'>
+#+end_src
+
+The ~>>>~ notation means that this command is run the in the interactive ~python~ interpreter as opposed to in a ~python~ script. We will get to this in a bit.
+
+A rather unique property of ~python~ is that /dynamic typing:/ you can change the type of a variable at any point.
+
+#+begin_src python
+a = 3
+a = "now I'm a string"
+#+end_src
+
+As mentioned above, this is one of the reasons that ~python~ is easy to write, you
+do not have to worry about /typing/ your variables. A variable containing a ~float~
+can later contain a ~dict~ without any issue. On the other hand, this is one of
+the reasons ~python~ is slower to execute than other languages: the interpreter
+does not know what a variable contains before reading it.
+
+#+begin_src md :tangle autopython.md :exports none
+# A minimal introduction to `python`
+
+## Data Types
+
+Used to store data in variables and to run operations on these
+variables. A subset of existing data types are:
+
+```python
+x = 4                                               # int    (integer)
+y = 4.3                                             # float  (floating point value)
+z = "hello world"                                   # str  (string)
+today_is_thursday = True                            # bool (boolean)
+chars_and_numbers = ["a", "b", "c", "c", 1, 2, 3]   # list
+phonebook = {"Alice": 61234567, "Bob": 68765432}    # dict (dictionary)
+first_four_of_alphabet = {"a", "b", "c", "d"}       # set
+```
+
+To get the type of a variable, use the `type()` function:
+
+``` python
+>>> type(y)
+<class 'float'>
+```
+
+`python` supports _dynamic typing_:
+
+``` python
+a = 3
+a = "now I'm a string"
+```
+
+This makes `python` easier to write at the cost of execution time.
+
+---
+#+end_src
+
+** Control Flow
+
+Control flow refers to the order of execution of your ~python~ commands. The most basic two cases are the ~if~-clause and the ~for~-loop.
+
+The ~if~-clause is executed if its condition is met. The ~else~-clause is an optional appendix which is executed if the condition is not met.
+
+#+begin_src python
+today_is_thursday = True
+
+if today_is_thursday:
+    print("Today is not Friday.")
+else:
+    print("Today might be Friday.")
+#+end_src
+
+Note the syntax here: the two clauses (~if~ and ~else~) are terminated with colons.
+To mark the span of the ~if~-clause, indentation is used (other languages wrap the
+code to be executed into ~{~ and ~}~ for example). The indentation has to be a
+multiple of 2 spaces (4 being the most common case) and it has to be
+consistently used throughout the script.
+
+#+begin_src python
+today_is_thursday = True
+
+if today_is_thursday:
+    print("Today is not Friday.")
+
+else:
+    print("Today might be Friday.")
+
+    print("I will go to the beach.")  # executed if today_is_thursday is False
+
+print("I will study some python.")    # always executed
+#+end_src
+
+The second basic control flow method is the ~for~ loop. A common pattern is to iterate over the elements in a ~list~.
+
+#+begin_src python
+weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday"]
+
+for day in weekdays:
+
+    if day == "tuesday":
+        print("Today is Tuesday.")
+
+    else:
+        print(f"Today is not Tuesday. It is {day}.")
+#+end_src
+
+Over the execution of the ~for~-loop, the ~day~ variable stores the value of the elements of the list one-by-one.
+The last line shows you how to include a variable value into a string, using the ~f-string~ syntax.
+
+#+begin_src md :tangle autopython.md :exports none
+# A minimal introduction to `python`
+
+## Control Flow
+
+To control the order of execution of your `python` commands. The most basic two cases: `if`-clause and `for`-loop
+
+### `if`-clause
+
+``` python
+today_is_thursday = True
+
+if today_is_thursday:
+    print("Today is not Friday.")
+
+else:
+    print("Today might be Friday.")
+
+    print("I will go to the beach.")  # executed if today_is_thursday is False
+
+print("I will study some python.")    # always executed
+```
+
+Note:
+
+- The two clauses (`if` and `else`) are terminated with colons.
+- Their context is indicated by the indentation of the line.
+- Consistent levels of indentation (2 or 4 spaces) have to be used.
+- Nesting clauses require an extra level of indendation
+- `python` is super readable
+
+---
+
+# A minimal introduction to `python`
+
+## Control Flow
+
+To control the order of execution of your `python` commands. The most basic two cases: `if`-clause and `for`-loop
+
+### `for`-loop
+
+A common pattern is to iterate over the elements in a `list`.
+
+``` python
+weekdays = ["monday", "tuesday", "wednesday", "thursday", "friday"]
+
+for day in weekdays:
+
+    if day == "tuesday":
+        print("Today is Tuesday.")
+
+    else:
+        print(f"Today is not Tuesday. It is {day}.")
+```
+
+Over the execution of the `for`-loop, the `day` variable stores the value of the elements of the list one-by-one.
+
+---
+#+end_src
+
+** Where to continue
+
+Here are some resources you can use to learn ~python~ syntax.
+
+- [[https://docs.python.org/3/tutorial/][Official Tutorial]]: Extensive, often too detailed for a beginner
+
+- [[https://www.codecademy.com/learn/learn-python-3][Codecademy's course on python3]]: Interactive, step-by-step guide to the language. This is how I learnt the basics.
+
+- [[https://automatetheboringstuff.com/2e/][Automate the Boring Stuff with Python]]: Popular beginner's guide to the language
+
+A great resource for learning more about the inner workings of ~python~ and
+keeping up-to-date with developments are the ~python~ conferences (called
+"PyCon"s) taking place all over the world. The talks are regularly uploaded on
+various youtube channels such as [[https://www.youtube.com/channel/UCMjMBMGt0WJQLeluw6qNJuA][this one from PyCon US]].
+
+#+begin_src md :tangle autopython.md :exports none
+# A minimal introduction to `python`
+
+## Where to continue from here?
+
+There  are _lots_ of resources online to help you learn `python`. Some of the better ones are:
+
+- The official tutorial from the `python` documentation: Extensive, often a bit too detailed for a beginner
+
+- Codecademy's course on `python3`: Interactive, step-by-step guide to the language. This is how I learnt the basics.
+
+- Automate the Boring Stuff with `python`: a popular beginner's guide to the language
+
+The links are in the course notes.
+
+Finally, I recommend YouTube: search for _pyCon_ ("python conference") and pick a talk which sounds interesting to you. It is my preferred way to learn more about
+`python` and keep up with new developments.
+
+---
+
+#+end_src
+
+
+* ~python~ on your system
+
+** ~python2~ versus ~python3~
+
+When researching ~python~, you may still come across documentation which refers to ~python2~. The ~2~ refers to the major version of the ~python~ distribution which is used.
+~python2~ and ~python3~ code are different and incompatible in some key areas (such
+as the ~print()~ function). Do not bother with any documentation referring to
+~python2~: it is outdated and no longer supported (end-of-life was 01/01/2020). In
+fact, when I started coding ~python~ ten years ago, I already started with
+~python3~.
+
+#+begin_src md :tangle autopython.md :exports none
+# `python` on your system
+
+## `python2` versus `python3`
+
+
+Use `python3`. `python2` was already outdated when I started to learn `python` 10 years ago.
+
+---
+
+#+end_src
+
+** ~python~ on your system
+
+On the laptops provided by the university, you will have ~python~ installed. To check which version is installed, open a command line and execute:
+
+#+begin_src bash
+$ python3 --version
+#+end_src
+
+Note: do not type the ~$~, it is a common way to indicate that a command is to be run in the command line.
+
+This will echo the ~python~ version installed on your system. I like to stay on
+the latest stable release (currently ~3.9~). I would recommend you run a ~python~
+version >=3.7. Note that you may have several versions of ~python~ installed on
+your system. Each version has it's specific executable à la ~python3.7~,
+~python3.8~. Only one version will be linked ("aliased") to the ~python3~ and
+~python~ executables. To avoid confusion, on system with multiple ~python~ versions
+installed, I use the full ~python~ executable name to ensure that I run the
+intended version. In these notes, I assume that ~python3~ is the executable we want to launch.
+
+~python~ scripts usually carry the ~.py~ suffix. When executing a script, ~python~ may create a directory called ~__pycache__/~, which serves to speed up the execution in later runs. Feel free to leave it or delete it.
+
+#+begin_src md :tangle autopython.md :exports none
+# `python` on your system
+
+## Which `python3` version?
+
+You will already have `python` installed on your system. Run the following in the command line to get the version.
+
+``` bash
+$ python3 --version
+```
+
+I like to stay on the latest stable release (`3.9`), and I recommend a version `>=3.7`.
+
+Several versions can be installed simultaneously: `python3.7`, `python3.8`, ...
+Only one is referred to as `python3` by your system. When in doubt: type the complete executable name.
+
+---
+
+# `python` on your system
+
+## `python` files
+
+- `python` scripts carry the `.py` suffix
+
+
+- `python` may create a directory called `__pycache__/`, which serves to speed up the execution of a script in later runs. Feel free to leave it or delete it.
+
+---
+#+end_src
+
+** Executing ~python~
+
+As mentioned above, ~python~ is an interpreted language. This has two practical implications:
+
+1. ~python~ will execute your code and stop the execution if it finds an error. Compiled languages will first validate the code and then run it.
+2. ~python~ has an interactive interpreter, where each line is execute as you enter it.
+
+There are two ways to run ~python~ code on your system:
+
+1. Launch the interactive interpreter
+
+#+begin_src bash
+$ python3
+#+end_src
+
+2. Run a ~python~ script by passing it's filepath to the ~python~ command
+
+#+begin_src bash
+$ python3 my_script.py
+#+end_src
+
+#+begin_src md :tangle autopython.md :exports none
+# `python` on your system
+
+## Executing `python`
+
+As `python` is an interpreted language, there are two ways to run code:
+
+- Using the interactive interpreter
+
+  ``` bash
+  $ python3
+  ```
+
+- Passing the path to a script to the interpreter
+
+  ``` bash
+  $ python3 my_script.py
+  ```
+
+`python` executes code line-by-line and stops if it finds an error
+
+---
+#+end_src
+
+** Packages and modules
+
+~python~ has a lot of built-in functionality such as mathematical functions. These functions are separated into /modules/. Modules are ~python~ files which you can find and open on your own system. To use a function from a certain module, you have to ~import~ it.
+
+#+begin_src python
+>>> import math
+#+end_src
+
+Once you have imported a module, you can access the ~python~ objects it provides through the /dot notation/. Do not worry if you do not understand the syntax for now.
+
+#+begin_src python
+>>> math.pi
+3.141592653589793
+>>> math.sin(math.pi / 2)
+1.0
+#+end_src
+
+Modules may further group functions into submodules, which are again accessed via the dot notation.
+
+#+begin_src python
+>>> import os.path
+#+end_src
+
+~python~ has a /standard library/ of modules which come pre-installed with your
+~python~ distribution, such as the ~math~ and ~os~ modules. To extend your
+library, you can install third-party /packages/ (not necessarily developed by the
+~python~ core developers). A package is a collection of modules. To install a
+package, you use ~pip~ ("pip installs packages"). To install ~pip~ itself, execute
+
+#+begin_src bash
+$ wget https://bootstrap.pypa.io/get-pip.py  # download an installer script
+$ python3 get-pip.py # execute the installer script
+$ rm get-pip.py # delete the installer script
+#+end_src
+
+Now, to install a package, run
+
+#+begin_src bash
+$ python3 -m pip install [package_name]
+#+end_src
+
+A good first package to install is the ~numpy~ package, which contains many mathematical and numerical calculation functions for ~python~.
+
+#+begin_src bash
+$ python3 -m pip install numpy
+#+end_src
+
+Ensure that this worked by running
+
+#+begin_src python
+>>> import numpy
+#+end_src
+
+If a module is missing on your system, ~python~ will raise the ~ModuleNotFoundError~ on the ~import~ line.
+
+#+begin_src md :tangle autopython.md :exports none
+# `python` on your system
+
+## Packages and modules
+
+`python` code is separated into _modules_. Modules are `python` files on your system containing functions, classes, and other functionality.
+
+To use a function from a module in your script, you `import` it.
+
+``` python
+>>> import math
+```
+
+You access the `python` objects in a module through the _dot notation_.
+
+``` python
+>>> math.pi
+3.141592653589793
+>>> math.sin(math.pi / 2)
+1.0
+```
+
+Some modules have submodules (i.e. more `python` files) which are again accessed via the dot notation.
+
+``` python
+>>> import os.path
+```
+
+
+---
+
+# `python` on your system
+
+## Installing packages
+
+`python` has a _standard library_ of modules such as the `math` and `os` modules.
+To extend your library, you can install third-party _packages_. A package is a collection of modules.
+
+To install a package, you use `pip` ("pip installs packages").
+To install `pip` itself, execute
+
+``` python
+$ wget https://bootstrap.pypa.io/get-pip.py  # download an installer script
+$ python3 get-pip.py # execute the installer script
+$ rm get-pip.py # delete the installer script
+```
+
+Now, to install a package, run
+
+``` python
+$ python3 -m pip install [package_name]
+```
+
+A good first package to install is the `numpy` package, which contains many mathematical and numerical calculation functions for `python`.
+
+``` python
+$ python3 -m pip install numpy
+```
+
+Ensure that this worked by running
+
+``` python
+>>> import numpy
+```
+
+If a module is missing on your system, `python` will raise the `ModuleNotFoundError` on the `import` line.
+
+---
+#+end_src
+
+* When things go wrong
+
+** Understanding the error message
+
+One of the first things you will need to learn is to understand ~python~ error messages and how to resolve them.
+Fortunately, they are mostly straight-forward.
+
+#+begin_src python
+>>> 4 / 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+#+end_src
+
+The last line contains the ~type~ of the error and a brief error message. Most of
+the time, the errors have descriptive names like the one above (e.g.
+~FileNotFoundError~). Quite common are the ~ValueError~  (passing a variable with an
+invalid value), the ~TypeError~ (passing a variable with an invalid type), and the
+~IndexError~ (for example, trying to access the fifth element in a list with four
+entries).
+
+The /traceback/ is a rundown of the error's origin. At the top, it will include the filename of your script and the line where the error occurred.
+In the case above, we are using the interpreter, hence the "file" is the standard input, and the error occurred in line 1. When we use an actual script,
+the traceback will contain more information.
+
+#+begin_src bash
+$ python3 my_script.py
+Traceback (most recent call last):
+  File "my_script.py", line 4, in <module>
+    x = math.sqrt(-3)
+ValueError: math domain error
+#+end_src
+
+If the function we call itself calls more functions and the error occurs in the
+one of the nested functions, the traceback will still start with the offending
+line in our script. It will then print in a top-down manner each function which
+was called and from where, concluding with line which caused the actual error.
+
+If the offending function call spans over multiple lines, only the first line will be printed.
+If you have edited the script while it was running (which is totally fine), the wrong line may be printed.
+
+#+begin_src md :tangle autopython.md :exports none
+# When things go wrong
+
+## Understanding `python` error messages
+
+The most common opportunity to learn something new.
+
+`python` error messages are generally easy to understand.
+
+``` python
+>>> 4 / 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+```
+
+The message contains three parts: _traceback_, _error type_, and _error message_
+
+- traceback: rundown of the error's origin in the script. Includes the filename of the script and the line where the error occurred.
+
+  ```
+  $ python3 my_script.py
+  Traceback (most recent call last):
+    File "my_script.py", line 4, in <module>
+      x = math.sqrt(-3)
+  ValueError: math domain error
+  ```
+
+It may point to the wrong line if you edit the script while it is executing (which is perfectly fine).
+
+---
+
+# When things go wrong
+
+## Understanding `python` error messages
+
+The most common opportunity to learn something new.
+
+`python` error messages are generally easy to understand.
+
+``` python
+>>> 4 / 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+```
+
+The message contains three parts: _traceback_, _error type_, and _error message_
+
+- _error type_: first part of last line. These are `python` objects with descriptive names (e.g. `FileNotFoundError`). Quite common are also
+
+  - `SyntaxError`: you made a typo
+
+  - `ValueError`: passing a variable with an invalid value
+
+  - `TypeError`: passing a variable with an invalid type
+
+  - `IndexError`: for example, trying to access the fifth element in a list with four
+entries
+
+---
+
+# When things go wrong
+
+## Understanding `python` error messages
+
+The most common opportunity to learn something new.
+
+`python` error messages are generally easy to understand.
+
+``` python
+>>> 4 / 0
+Traceback (most recent call last):
+  File "<stdin>", line 1, in <module>
+ZeroDivisionError: division by zero
+```
+
+The message contains three parts: _traceback_, _error type_, and _error message_
+
+- _error message_: Written by the developer. This is what you put into google if you cannot fix the error yourself.
+
+---
+
+#+end_src
+
+** Fixing the error
+
+Many times, the description of the error will provide enough information to understand its origin. If you do not understand what is going wrong,
+here are some steps to resolve the issue.
+
+1. In the interactive interpreter, run
+
+#+begin_src python
+>>> help(function_name)  # function_name e.g. math.sqrt
+#+end_src
+
+to open the documentation of the function. It might expect different arguments from what you thought.
+
+2. Right before the offending line in your script, insert the ~breakpoint()~ command. This will cause the ~python~ interpreter to stop the execution of the script
+   at this line and drop you into the interactive interpreter, with all variables in their current state saved. You can then run any valid ~python~ command
+   to inspect the current state of your variables, e.g. by typing the variable names, you get the current values. These values might be different from what you thought.
+   Use ~n~ to execute the next line of code, ~c~ to continue, and ~q~ to quit.
+
+3. Googling the error message. Typically, someone has had this issue before you and was nice enough to post the solution to a page like [[https://stackoverflow.com][StackOverflow]].
+
+#+begin_src md :tangle autopython.md :exports none
+# When things go wrong
+
+## Fixing the error
+
+Three steps to resolve your error:
+
+1. Are you calling the function correctly? In the interactive interpreter, import the module and use the `help()` function to show the documentation.
+
+    ```python
+    >>> import math
+    >>> help(math.sqrt)
+    ```
+
+2. Are you variables what you think they are? Place a `breakpoint()` just before the offending line and execute the script. This will trigger the interactive interpreter at the line of the `breakpoint()`, with all the variables available as in the interactive interpreter. Use `n` to execute the next line of code, `c` to continue, and `q` to quit.
+
+    ```python
+    breakpoint()
+    ```
+
+3. Google the error message. Typically, someone has had this issue before you and was nice enough to post the solution to a page like [StackOverflow](https://stackoverflow.com).
+
+---
+#+end_src
+
+* The standard library
+
+The /standard library/ refers to the classes and functions which are distributed with `python` and maintained
+by the `python` core developers. They likely present the best solution to the problem they aim to solve, so in general,
+you should prefer the /standard library/ over someone else's modules.
+
+The ~python~ [[https://docs.python.org/3/library/][standard library]] comes equipped with many modules for system management, network management, debugging, and more.
+
+Some modules and functions which I use frequently are given below.
+
+- ~os~
+
+  This modules contains many functions for interacting with your operating system. I use is most to e.g. get a list of files in a directory and interact with their filepaths.
+
+  #+begin_src python
+  >>> import os
+  >>> dir_home = os.path.expanduser("~/")  # get the path to the home directory
+  >>> os.listdir(dir_home)  # list the contents of the home directory
+  ...
+  #+end_src
+
+  Also check out the ~pathlib~ module, which is a more modern (i.e. object-oriented) approach to filepath handling.
+
+- ~collections.Counter()~
+
+  The ~collections~ module has other useful functionality, but this one deserves its honourary mention.
+  Given an iterable (e.g. a ~list~), it returns a ~dict~ with the elements as keys and the number of times they appear in the iterable as values.
+
+  #+begin_src python
+  >>> from collections import Counter
+  >>> zoo = ["monkey", "elephant", "giraffe", "monkey", "tiger", "elephant", "monkey", "lion"]
+  >>> Counter(zoo)
+  Counter({"monkey": 3, "elephant": 2, "giraffe": 1, "tiger": 1, "lion": 1})
+  #+end_src
+
+- ~time.time()~
+
+  Get the current system time. Useful to time the execution of your scripts.
+
+- ~sys.exit()~
+
+  Used to gracefully exit a script.
+
+#+begin_src md :tangle autopython.md :exports none
+# The `python` standard library
+
+The _standard library_ refers to the classes and functions which are distributed with `python` and maintained
+by the `python` core developers. It comes equipped with many modules for system management, network management, debugging, and more.
+
+Some modules and functions which I use frequently are given below.
+
+- `os`: This modules contains many functions for interacting with your operating system.
+
+  ```python
+  >>> import os
+  >>> dir_home = os.path.expanduser("~/")  # get the path to the home directory
+  >>> os.listdir(dir_home)  # list the contents of the home directory
+  ...
+  ```
+
+
+- `collections.Counter()`: Given an iterable (e.g. a `list`), it returns a `dict` with the elements as keys and the number of times they appear in the iterable as values.
+
+  ```python
+  >>> from collections import Counter
+  >>> zoo = ["monkey", "elephant", "giraffe", "monkey", "tiger", "elephant", "monkey", "lion"]
+  >>> Counter(zoo)
+  Counter({"monkey": 3, "elephant": 2, "giraffe": 1, "tiger": 1, "lion": 1})
+  ```
+
+
+- `time.time()`: Get the current system time. Useful to time the execution of your scripts.
+
+
+- `sys.exit()`: Used to gracefully exit a script.
+
+---
+#+end_src
+
+* Third-party packages
+
+The majority of things you program in the beginning have been programmed by
+others, and probably better. As an example, I wrote a FITS image parser and
+editor before I discovered the ~astropy~ package.
+
+Here is a overview of the most important packages outside the standard library.
+
+** ~numpy~
+
+~numpy~ is likely the most used third-party package in ~python~. It adds new data
+types as as the array and implements many maths and computing functions. ~numpy~
+completely replaces the ~math~ module in ~python~ in most applications. Under the
+hood, ~numpy~ offers speed by vectorizing many computations automatically.
+
+The ~numpy.array~ is ubiquitous and frequently used as replacement for the ~list~, as they behave like vectors:
+
+#+begin_src python
+>>> import numpy as np
+>>> vector1 = np.array([1, 2, 3])
+>>> vector2 = np.array([1, 2, 3])
+>>> vector1 + vector2      # arrays
+array([2, 4, 6])
+>>> [1, 2, 3] + [1, 2, 3]  # lists
+[1, 2, 3, 1, 2, 3]
+#+end_src
+
+#+begin_src md :tangle autopython.md :exports none
+# Third-party packages
+
+## `numpy`
+
+- `numpy` is likely the most popular third-party package in `python`
+
+
+- It completely replaces the standard `math` module and adds new data types such as the `array`
+
+
+- The `numpy.array` is everywhere in `python` and is frequently used as replacement of the `list`, as it behaves more like a vector
+
+
+```python
+>>> import numpy as np
+>>> vector1 = np.array([1, 2, 3])
+>>> vector2 = np.array([1, 2, 3])
+>>> vector1 + vector2      # arrays
+array([2, 4, 6])
+>>> [1, 2, 3] + [1, 2, 3]  # lists
+[1, 2, 3, 1, 2, 3]
+```
+---
+
+#+end_src
+
+** ~matplotlib~
+
+~matplotlib~ is the go-to package for creating figures in ~python~. The figures you
+create can range from quick-look plots to publication-ready works-of-art. Watch out: creating and perfectioning figures is addictive.
+
+Definitely check out the [[https://github.com/matplotlib/cheatsheets][cheatsheets]] on their GitHub repository, made with ~matplotlib~ and ~LaTeX~.
+
+#+CAPTION: The /matplotlib for beginners/ guide from Nicolas P. Rougier, one of several fantastic ~matplotlib~ cheat sheets.
+#+ATTR_HTML: :width 650px
+[[file:gfx/mpl_cheat.png]]
+
+#+begin_src python
+>>> import matplotlib.pyplot as plt
+>>> import numpy as np
+>>> x = np.linspace(0, 2*np.pi, 100)  # get 100 points evenly spaced between 0 and 2 pi
+>>> plt.plot(x, np.sin(x), color="blue", label="Sine")
+>>> plt.plot(x, np.cos(x), color="red", label="Cosine")
+>>> plt.legend()
+>>> plt.show()
+#+end_src
+
+#+begin_src md :tangle autopython.md :exports none
+# Third-party packages
+
+## `matplotlib`
+
+- _The_ gold-standard for creating figures in `python`
+
+
+- Create quick-look plots of data or publication-ready works-of-art
+
+
+- Watch out: creating and perfectioning figures is addictive.
+
+
+- Highly recommend: https://github.com/matplotlib/cheatsheets
+
+
+```python
+>>> import matplotlib.pyplot as plt
+>>> import numpy as np
+>>> x = np.linspace(0, 2*np.pi, 100)  # get 100 points evenly spaced between 0 and 2 pi
+>>> plt.plot(x, np.sin(x), color="blue", label="Sine")
+>>> plt.plot(x, np.cos(x), color="red", label="Cosine")
+>>> plt.legend()
+>>> plt.show()
+```
+
+---
+#+end_src
+
+** ~pandas~
+
+~pandas~ is useful whenever you have data in a table format, e.g. when reading in a ~csv~ file. It has some unintuitive quirks which you have to learn, then it becomes invaluable.
+
+The ~pandas.DataFrame()~ is the core class.
+
+#+begin_src md :tangle autopython.md :exports none
+# Third-party packages
+
+## `pandas`
+
+- Whenever you have a table of data, such as a `CSV` file
+
+
+- Adds the `pandas.DataFrame`
+
+
+- There's a bit of a learning curve and some unintuitive quirks, but then it's irreplacable
+
+
+```python
+>>> import pandas as pd
+```
+---
+#+end_src
+
+** ~scipy~
+
+All your higher mathematical needs: fast-fourier transform, curve fitting, integration, linear algebra, and more.
+
+#+begin_src md :tangle autopython.md :exports none
+# Third-party packages
+
+## `scipy`
+
+- For your higher mathematical needs: fast-fourier transform, curve fitting, integration, linear algebra, and more.
+
+```python
+>>> from scipy import integrate
+```
+
+---
+#+end_src
+
+** ~astropy~
+
+~astropy~ is the astronomer's toolbox, from planning observations by computing
+source coordinates to analyzing the results with time series and other common
+astronomical models. There is plenty of functionality to read and edit ~FITS~
+files.
+
+Beware of the ~astropy.Table~ though, I never got used to them. Luckily, they have a ~.to_pandas()~ method, which returns a ~pandas.DataFrame()~.
+
+#+begin_src md :tangle autopython.md :exports none
+# Third-party packages
+
+## `astropy`
+
+
+- The astronomer's toolbox in `python`
+
+
+- Computing astronomical source coordinates in different systems at different epochs, analyze observations with time series, common astronomical models
+
+
+- Plenty of functionality to read and edit `FITS` files.
+
+
+```python
+>>> from astropy.io import fits
+```
+
+- Get started at https://learn.astropy.org
+
+---
+#+end_src
+
+* Best Practices
+
+Best practices refer to code patterns and formats which could be written in many
+ways, but over the time it has become clear that there is a preferable way to do
+things. Most of them serve to make your code more readable and understandable.
+
+** Writing /pythonic/ code
+
+This comes with time and gaining knowledge of the standard library. A classic example:
+
+#+begin_src python
+colours = ["blue", "black", "red"]
+
+for i in range(len(colours)):
+    print("My favourite colour is ", colours[i])
+#+end_src
+
+This should instead look like this.
+
+#+begin_src python
+colours = ["blue", "black", "red"]
+
+for colour in colours:
+    print("My favourite colour is ", colour)
+#+end_src
+
+Indicators that you are not writing pythonic code (also called /code smell/):
+
+- you are juggling lots of indices variables and it is becoming difficult to keep track of them
+
+- you reach a high level of indentation
+
+- you have many ~if~-clauses
+
+I /highly/ recommend the following (and really all other talks) by Raymond Hettinger: [[https://www.youtube.com/watch?v=OSGv2VnC0go][Transforming Code into Beautiful, Idiomatic Python]]
+
+#+begin_src md :tangle autopython.md :exports none
+# Best practices
+
+The earlier you stick to this, the better.
+
+## Writing _pythonic_ code
+
+- "pythonic" code refers to code which makes use of `python`'s unique and built-in features
+
+
+- Example: people coming from C-languages will overuse indices when writing `python`
+
+```python
+colours = ["blue", "black", "red"]
+
+for i in range(len(colours)):
+    print("My favourite colour is ", colours[i])
+```
+
+```python
+colours = ["blue", "black", "red"]
+
+for colour in colours:
+    print("My favourite colour is ", colour)
+```
+
+- Recommended talk: Raymond Hettinger - _Transforming Code into Beautiful, Idiomatic Python_
+
+---
+#+end_src
+
+** # Comment everything
+
+Every third line I write is a comment. Comments tell me what the code I wrote is doing. It frequently occurs that I write code on Friday and when I come back on Monday into the office, I cannot explain what the code is supposed to do without studying it. Comment frequently, more for yourself than others. Avoid obvious comments: explain your code on a meta level, rather than in close detail.
+
+Get the habit of writing docstrings for your functions.
+
+#+CAPTION: Comment your code but avoid redundant comments.
+#+ATTR_HTML: :width 350px
+[[file:gfx/comment.png]]
+
+#+begin_src md :tangle autopython.md :exports none
+# Best practices
+
+The earlier you stick to this, the better.
+
+## Comment everything // it's a great idea
+
+- You will write code on Friday which you cannot understand on Monday
+
+
+- Comment the meta-level of your code: not details, but what is it achieving
+
+
+- Avoid obvious comments:
+
+![15](gfx/comment.png)
+
+
+---
+#+end_src
+
+** Meaningful variable names
+
+Another useful rule to increase the readability of your scripts. Compare this
+
+#+begin_src python
+et = 50  # in s
+#+end_src
+
+to this
+
+#+begin_src python
+exposure_time = 50  # in s
+exp_time = 50  # in s
+#+end_src
+
+While the former is quicker to type, the two latter are clear even when removed
+from the context of the script they appear in.
+
+#+begin_src md :tangle autopython.md :exports none
+# Best practices
+
+The earlier you stick to this, the better.
+
+## Choose meaningful variable names
+
+Compare
+
+```python
+et = 50  # in s
+```
+
+to
+
+```python
+exposure_time = 50  # in s
+exp_time = 50  # in s
+```
+
+---
+#+end_src
+
+
+** No magic numbers
+
+Magic numbers are numbers which appear in your script without any explanation. They will confuse you at a later stage.
+
+#+begin_src python
+electrons = 5 * 30  # ?
+#+end_src
+
+versus
+
+#+begin_src python
+exposure_time = 30  # in s
+rate = 5  # in electrons / s
+electrons = rate * exposure_time
+#+end_src
+
+
+#+begin_src md :tangle autopython.md :exports none
+# Best practices
+
+The earlier you stick to this, the better.
+
+## Avoid magic numbers
+
+- Similar to meaningful variable names
+
+```python
+electrons = 5 * 30  # ?
+```
+
+versus
+
+```python
+exposure_time = 30  # in s
+rate = 5  # in electrons / s
+electrons = rate * exposure_time
+```
+
+---
+#+end_src
+
+** Proper formatting
+
+Apart from the indentation, you are quite free to format your ~python~ code
+however you want.  You can use ~'~ or ~"~ as string delimiters, you can wrap
+variable assignments with whitespaces (~x = 4~) or you can use the shorter form
+(~x=4~). Nevertheless, there is a right way to format your code, and it is called
+[[https://www.python.org/dev/peps/pep-0008/][PEP8]]. If you do not want to worry about code formatting, I recommend to use an
+autoformatter such as [[https://www.python.org/dev/peps/pep-0008/][black]], which will ensure that your code is always
+presentable. Many editors like the ones I listed above offer plugins which
+format your code on saving.
+
+[[https://www.youtube.com/watch?v=wf-BqAjZb8M][Here is a nice talk on the topic]], once more by Raymond Hettinger.
+
+#+begin_src md :tangle autopython.md :exports none
+# Best practices
+
+The earlier you stick to this, the better.
+
+## Properly format your code
+
+- Apart from indentation, `python` is quite liberal with the syntax: `'` or `"` for strings are accepted, whitespaces and newlines can vary
+
+
+- There is a style-guide, referred to as PEP8. It is the standard and leads to pretty code.
+
+
+- Personal recommendation: I use an autoformatter called `black` which formats the code on every save. I never have to worry about it. You can get autoformatters for almost any code editor.
+
+---
+#+end_src
+
+
+* Tools for developing python
+
+** Your editor
+
+Choosing an editor for coding is a very subjective decision and a popular matter
+of discussion. I recommend you start with one of the editors below, as they
+provide several convenient features such as code completion, quick variable
+value inspection, and easy access to documentation.
+
+Popular editors for writing ~python~ scripts are
+
+- [[https://atom.io][Atom]]
+- [[https://www.sublimetext.com][Sublime Text 4]]
+- [[https://code.visualstudio.com][Visual Studio Code]]
+- [[https://www.jetbrains.com/pycharm/][PyCharm]]
+
+
+#+begin_src md :tangle autopython.md :exports none
+# Tools for developing `python`
+
+## Your editor
+
+- A subjective decision and often topic of heated debates: your favourite editor
+
+
+- There are many good options to choose from. In the beginning, I recommend editors which have supporting features like code completion, documentation lookups, variable inspection.
+
+
+- These are popular choices:
+
+  - [Atom](https://atom.io)
+
+  - [Sublime Text 4](https://www.sublimetext.com)
+
+  - [Visual Studio Code](https://code.visualstudio.com)
+
+  - [PyCharm](https://www.jetbrains.com/pycharm/)
+
+---
+#+end_src
+
+** Your interactive interpreter
+
+The default interactive ~python~ interpreter is quite dull. It is missing nice features like syntax highlighting and TAB-completion of function names.
+The [[https://ipython.org][ipython]] interpreter is a popular alternative. You can install it via ~pip~.
+
+#+begin_src bash
+$ python3 -m pip install ipython
+#+end_src
+
+#+begin_src md :tangle autopython.md :exports none
+# Tools for developing `python`
+
+## Your interactive interpreter
+
+`ipython` is a common replacement for the standard `python` interpreter. It has
+some nice features like TAB-completion of commands and syntax highlighting.
+
+```bash
+$ python3 -m pip install ipython
+```
+
+Remember: when you stumble over a new `python` package, software, tool, anything, take some time to look through the documentation. You will see what it offers, how to use it, and save yourself time in the long run!
+
+---
+#+end_src
+
+** ~jupyter~ and its notebooks
+
+[[https://jupyter.org][jupyter]] notebooks are popular tools for writing code in a format that's
+different to most editors. The input area is divided into cells which can
+contain different types of input (~python~ code, markdown text, LaTeX).
+Each cell can be executed separately from other cells.
+
+#+begin_src bash
+$ python3 -m pip install jupyter
+$ jupyter notebook
+#+end_src
+
+#+begin_src md :tangle autopython.md :exports none
+# Tools for developing `python`
+
+## `jupyter` and its notebooks
+
+- Popular tool for developing `python`, running in your browser
+
+
+- Based on cells which can have different content: `python` code, LaTeX, markdown text. Good for documenting and "telling a story" with your code
+
+
+- Cells can be executed separately, which saves execution time
+
+
+```bash
+$ python3 -m pip install jupyter
+$ jupyter notebook
+```
+
+---
+#+end_src
+
+* Exercises
+
+The two exercises below each have their own motivation. The first represents several tasks which you will encounter frequently in your daily work as researcher: simulating data, fitting data, and presenting the result.
+
+The second task represents a standard introduction-to-coding task, the Fibonacci numbers. There is a twist: the last part of the task tells you to (1) notice that the first solution offers significant room for improvement and (2) to improve your first solution. Again, this represents a frequent aspect of your later work.
+
+Neither of the tasks require you to come up with elaborate algorithms, they can
+be solved using functions provided either in the standard library or the
+third-party packages mentioned above.
+
+** Task 1: Simulating, fitting, and displaying data
+
+- Take 100 random samples of a sine curve with an amplitude and a period of your choosing
+- Add Gaussian noise to the samples. The noise should have a mean of 0 and a standard deviation equal to 10% of the sine curve signal
+- Fit your simulated data with a sine curve
+- Create a figure which displays the simulated data and the fitted sine curve
+- In the figure, add the best fit parameters and their errors
+
+Only continue reading if you need a hint.
+
+#+LATEX: \color{lightgray}
+Hint: numpy.random can be used to create the random data. To add the Gaussian noise, you can add a vector of 100 samples drawn from a Gaussian distribution to the vector of your sine curve data. For the fit, you can use scipy.optimize. The last part of the exercise requires the matplotlib package.
+#+LATEX: \color{black}
+
+#+begin_src md :tangle autopython.md :exports none
+# Exercises
+
+Aim: to simulate (1) common tasks like simulating, fitting, plotting data, and (2) realizing that an existing solution is suboptimal and improving it
+
+# Task 1: Simulating, fitting, and displaying data
+
+- Take 100 random samples of a sine curve with an amplitude and a period of your choosing
+- Add Gaussian noise to the samples. The noise should have a mean of 0 and a standard deviation equal to 10% of the sine curve signal
+- Fit your simulated data with a sine curve
+- Create a figure which displays the simulated data and the fitted sine curve
+- In the figure, add the best fit parameters and their errors
+
+# Task 2: The Fibonacci Numbers
+
+- Define a function which accepts an integer `n` as argument and returns the value of the `n`th Fibonacci number `F_n`.
+- Compute `F_{40}`. Print its value and the time it took to compute it.
+- It takes a while. As Raymond Hettinger would say, "there must be a better way"! Get the computation time to less than one second.
+
+#+end_src
+
+** Task 2: The Fibonacci Numbers
+
+- Define a function which accepts an integer $n$ as argument and returns the value of the nth Fibonacci number $F_n$.
+- Compute F$_{40}$. Print its value and the time it took to compute it.
+- It takes a while. As Raymond Hettinger would say, "there must be a better way"! Get the computation time to less than one second.
+
+Only continue reading if you need a hint.
+
+#+LATEX: \color{lightgray}
+Hint: You only need to add two lines of code (one of which is an import
+statement) to speed up the computation by a factor of 1e6.
+#+LATEX: \color{black}
+
+* Solutions
+
+The solutions can be found on the [[https://github.com/maxmahlke/autopython][GitHub repository]] of these notes in the ~exercises/~ directory.
